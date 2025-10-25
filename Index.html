@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photo Albums</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background: #121212;
+    color: #fff;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+    letter-spacing: 1px;
+    color: #ffffff;
+  }
+
+  /* === Albums Grid === */
+  .albums {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+    padding: 0 20px 40px 20px;
+  }
+
+  .album {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #1e1e1e;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .album:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+  }
+
+  .album img {
+  width: 100%;           /* full width of album card */
+  height: 200px;         /* increase height for better visibility */
+  object-fit: cover;     /* ensures image fills the container without distortion */
+  display: block;
+  border-bottom: 1px solid #333;
+  border-radius: 12px 12px 0 0; /* rounded top corners */
+  transition: transform 0.3s;
+}
+
+.album:hover img {
+  transform: scale(1.05); /* subtle zoom on hover */
+}
+
+  .album h3 {
+    margin: 10px;
+    text-align: center;
+    font-weight: 500;
+    color: #fff;
+  }
+
+  /* === Album Page === */
+  .album-page {
+    display: none;
+    padding: 20px;
+    min-height: 100vh;
+    background: #1a1a1a;
+  }
+
+  .album-page h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+  }
+
+  .photo-grid img {
+    width: 100%;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s;
+    object-fit: cover;
+    height: 150px;
+  }
+
+  .photo-grid img:hover {
+    transform: scale(1.05);
+  }
+
+  .back-btn {
+    display: block;
+    margin: 10px auto 20px;
+    background: #2196f3;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+  }
+
+  .back-btn:hover {
+    background: #1976d2;
+  }
+
+  /* === Full Photo View === */
+  .photo-view {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 0px;
+  }
+
+  .photo-view-content {
+    max-width: 90%;
+    max-height: 90%;
+    text-align: center;
+  }
+
+  .photo-view-content img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.7);
+  }
+
+  .photo-view-content button {
+    margin-top: 10px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+  }
+
+  #downloadBtn {
+    background: #4caf50;
+    color: white;
+  }
+
+  #downloadBtn:hover {
+    background: #388e3c;
+  }
+
+  .photo-view-content .close-btn {
+    background: #f44336;
+    color: white;
+    margin-top: 10px;
+  }
+
+  .photo-view-content .close-btn:hover {
+    background: #d32f2f;
+  }
+</style>
+</head>
+<body>
+
+<h1>My Photo Albums</h1>
+
+<!-- Albums Grid -->
+<div class="albums" id="albums">
+  <!-- Album 1: Kajal -->
+  <div class="album" onclick="openAlbum('album1')">
+    <img src="k.c.png" alt="Kajal Album">
+    <h3>Kajal</h3>
+  </div>
+
+  <!-- Album 2: Divya -->
+  <div class="album" onclick="openAlbum('album2')">
+    <img src="d.c.jpg" alt="Divya Album">
+    <h3>Divya</h3>
+  </div>
+
+  <!-- Album 3: Nilu -->
+  <div class="album" onclick="openAlbum('album3')">
+    <img src="n.c.jpg" alt="Nilu Album">
+    <h3>Nilu</h3>
+  </div>
+
+  <!-- Album 4: Mohini -->
+  <div class="album" onclick="openAlbum('album4')">
+    <img src="m.c.jpg" alt="Mohini Album">
+    <h3>Mohini</h3>
+  </div>
+</div>
+
+<!-- Album Page -->
+<div class="album-page" id="albumPage">
+  <button class="back-btn" onclick="closeAlbum()">Back to Albums</button>
+  <h2 id="albumTitle"></h2>
+  <div class="photo-grid" id="albumPhotos"></div>
+</div>
+
+<!-- Full Photo View -->
+<div class="photo-view" id="photoView">
+  <div class="photo-view-content">
+    <img id="fullPhoto" src="">
+    <br>
+    <button id="downloadBtn">Download Photo</button>
+    <br><br>
+    <button class="close-btn" onclick="closePhoto()">Close</button>
+  </div>
+</div>
+
+<script>
+  const albumsData = {
+    album1: {
+      title: "Kajal",
+      photos: [
+        "k.png","k1.png","k2.png","k3.png","k4.png","k5.png","k6.png","k7.png","k8.png","k9.png",
+        "k10.jpg","k11.jpg","k12.png","k13.png","k14.png","k15.png","k16.png","k17.png","k18.png"
+      ]
+    },
+    album2: {
+      title: "Divya",
+      photos: [
+        "d.jpg","d1.jpg","d3.jpg","d4.jpg","d5.jpg","d6.jpg","d7.jpg","d8.jpg","d9.jpg",
+        "d10.jpg","d11.jpg","d12.jpg","d13.jpg","d14.jpg","d15.jpg","d16.jpg","d17.jpg","d18.jpg",
+        "d19.jpg","d20.jpg","d21.jpg","d22.jpg","d23.jpg","d24.jpg","d25.jpg"
+      ]
+    },
+    album3: {
+      title: "Nilu",
+      photos: [
+        "n.jpg","n1.jpg","n2.jpg","n3.jpg","n4.jpg","n5.jpg","n6.jpg","n7.jpg","n8.jpg","n9.jpg",
+        "n10.jpg","n11.jpg","n12.jpg","n13.jpg","n14.jpg"
+      ]
+    },
+    album4: {
+      title: "Mohini",
+      photos: [
+        "m.jpg","m1.jpg","m2.jpg","m3.jpg","m4.jpg","m5.jpg","m6.jpg"
+      ]
+    }
+  };
+
+  const albumsDiv = document.getElementById('albums');
+  const albumPage = document.getElementById('albumPage');
+  const albumTitle = document.getElementById('albumTitle');
+  const albumPhotos = document.getElementById('albumPhotos');
+
+  const photoView = document.getElementById('photoView');
+  const fullPhoto = document.getElementById('fullPhoto');
+  const downloadBtn = document.getElementById('downloadBtn');
+  let currentPhoto = '';
+
+  function openAlbum(albumKey) {
+    const album = albumsData[albumKey];
+    albumTitle.textContent = album.title;
+    albumPhotos.innerHTML = '';
+
+    album.photos.forEach(src => {
+      const img = document.createElement('img');
+      img.src = src;
+      img.onclick = () => openPhoto(src);
+      albumPhotos.appendChild(img);
+    });
+
+    albumsDiv.style.display = 'none';
+    albumPage.style.display = 'block';
+  }
+
+  function closeAlbum() {
+    albumPage.style.display = 'none';
+    albumsDiv.style.display = 'grid';
+  }
+
+  function openPhoto(src) {
+    currentPhoto = src;
+    fullPhoto.src = src;
+    photoView.style.display = 'flex';
+  }
+
+  function closePhoto() {
+    photoView.style.display = 'none';
+  }
+
+  downloadBtn.addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.href = currentPhoto;
+    link.download = 'photo.jpg';
+    link.click();
+  });
+</script>
+
+</body>
+</html>
